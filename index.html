@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dr.Bubó netrendelője</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #f0f8ff;
+    color: #003366;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  header {
+    background-color: #a3c2f7;
+    width: 100%;
+    padding: 1em 0;
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  main {
+    flex-grow: 1;
+    max-width: 480px;
+    width: 90%;
+    margin: 2em 0;
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 1em;
+  }
+  #panaszok-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7em;
+    margin-bottom: 2em;
+  }
+  button.panasz-gomb {
+    background-color: #a3c2f7;
+    border: 2px solid #003366;
+    border-radius: 8px;
+    padding: 0.5em 1.2em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button.panasz-gomb:hover {
+    background-color: #739de9;
+  }
+  #tanacs-container {
+    font-size: 1.1em;
+    margin-bottom: 1.5em;
+    min-height: 4em;
+  }
+  #gombok-utani {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+  }
+  button.utani-gomb {
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6em 1.5em;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button.utani-gomb:hover {
+    background-color: #002244;
+  }
+  #koszono-szoveg {
+    margin-top: 1em;
+    font-weight: bold;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  Dr.Bubó netrendelője
+  <img id="bubo-img" src="https://i.imgur.com/mPEbPOk.png" alt="Dr.Bubó" />
+</header>
+
+<main>
+  <div id="panasz-oldal">
+    <h2>Mi a panasza?</h2>
+    <div id="panaszok-container"></div>
+  </div>
+
+  <div id="tanacs-oldal" style="display:none;">
+    <div id="tanacs-container"></div>
+    <div id="gombok-utani">
+      <button id="koszonom-btn" class="utani-gomb">Köszönöm a tanácsot!</button>
+      <button id="mas-btn" class="utani-gomb">Más panaszom is van</button>
+    </div>
+    <div id="koszono-szoveg"></div>
+  </div>
+</main>
+
+<script>
+  const panaszok = [
+    { nev: 'Ájulásérzet', tanacs: 'Üljön le, mielőtt a padló ül rá.' },
+    { nev: 'Álmatlanság', tanacs: 'Ha nem jön álom a szemére, számoljon fáradt sáskákat, ne pulykákat.' },
+    { nev: 'Allergia', tanacs: 'Por? Pollen? Menjen víz alá – ott egyik sincs.' },
+    { nev: 'Bőrirritáció', tanacs: 'Ne vakarja, inkább csiklandozza – legalább szórakoztatóbb.' },
+    { nev: 'Duzzanat', tanacs: 'Hideg borogatás – vagy higgadt hozzáállás.' },
+    { nev: 'Fáradtság', tanacs: 'Aludjon egy jót. Akkor is, ha most nincs kedve.' },
+    { nev: 'Fejfájás', tanacs: 'Fejfájás ellen próbálja ki a csendet – bár ritka, mint a békegalamb a rendelőben.' },
+    { nev: 'Fogfájás', tanacs: 'Ne harapjon rá semmire – se szó szerint, se képletesen.' },
+    { nev: 'Fülzúgás', tanacs: 'A fülzúgást csillapítsa madárcsicsergéssel vagy halk operával.' },
+    { nev: 'Gyomorrontás', tanacs: 'Kerülje a tegnapi pörköltet. Komolyan.' },
+    { nev: 'Hasmenés', tanacs: 'Maradjon otthon és gyorsabban jusson el a fürdőszobához, mint a gondolat.' },
+    { nev: 'Hátfájás', tanacs: 'Próbáljon fára mászni, de csak ha nincs tériszonya.' },
+    { nev: 'Hidegrázás', tanacs: 'Takaró alá, ne a fagyasztóba!' },
+    { nev: 'Izomgörcs', tanacs: 'Nyújtózkodjon úgy, mint a macska ebéd után.' },
+    { nev: 'Kézremegés', tanacs: 'Ne írjon SMS-t – félreérthető lehet.' },
+    { nev: 'Köhögés', tanacs: 'Köhögjön, de ne zavarja meg a tücsökzenét.' },
+    { nev: 'Lábfájás', tanacs: 'Pihentesse, de ne felejtse el, hogy járni mégiscsak kell.' },
+    { nev: 'Láz', tanacs: 'Láz esetén hűtőfürdő vagy hideg nézés a tükörbe ajánlott.' },
+    { nev: 'Légszomj', tanacs: 'Lassú légzés, nyugalom, erdei jelenet elképzelése.' },
+    { nev: 'Megfázás', tanacs: 'Tea, pokróc, mese – nem csak gyerekeknek.' },
+    { nev: 'Nyelési nehézség', tanacs: 'Ne nyelje le a büszkeségét sem – csak lassan, óvatosan.' },
+    { nev: 'Orrdugulás', tanacs: 'Párologtatás és orrfújás, de ne egyszerre.' },
+    { nev: 'Orvosi félelem', tanacs: 'Képzelje el az orvost bohócorrban. Segít.' },
+    { nev: 'Pánikérzés', tanacs: 'Lassú légzés, mély sóhaj – és egy kis humor a helyzetre.' },
+    { nev: 'Szájszárazság', tanacs: 'Igyon vizet – vagy olvasson kevesebb száraz viccet.' },
+    { nev: 'Szédülés', tanacs: 'Csukja be a szemét, ne a világ forogjon, hanem Ön pihenjen.' },
+    { nev: 'Székrekedés', tanacs: 'Körtelé, séta, vagy egy jó rémmese – bármi, ami mozgósít.' },
+    { nev: 'Szívdobogás', tanacs: 'Nyugalom, nem feltétlen szerelem.' },
+    { nev: 'Tüsszögés', tanacs: 'Tüsszögés ellen zsebkendő + villámgyors kézmozdulat.' },
+    { nev: 'Vérnyomás-ingadozás', tanacs: 'Mérje meg, de ne az idegességtől legyen magasabb.' },
+   { nev: 'Vérszegénység', tanacs: 'Vérszegénység ellen egyen sok májat és hallgassa a rigók énekét!' },
+    { nev: 'Zsibbadás', tanacs: 'Ha zsibbad a keze vagy lába, mozogjon egy kicsit, mintha épp táncolna a ligetben.' }
+  ]; 
+
+  panaszok.sort((a,b) => a.nev.localeCompare(b.nev));
+
+  const panaszContainer = document.getElementById('panaszok-container');
+  const panaszOldal = document.getElementById('panasz-oldal');
+  const tanacsOldal = document.getElementById('tanacs-oldal');
+  const tanacsContainer = document.getElementById('tanacs-container');
+  const koszonomBtn = document.getElementById('koszonom-btn');
+  const masBtn = document.getElementById('mas-btn');
+  const koszonoSzoveg = document.getElementById('koszono-szoveg');
+
+  panaszok.forEach(p => {
+    const btn = document.createElement('button');
+    btn.textContent = p.nev;
+    btn.className = 'panasz-gomb';
+    btn.addEventListener('click', () => {
+      megjelenitTanacs(p);
+    });
+    panaszContainer.appendChild(btn);
+  });
+
+  function megjelenitTanacs(panasz) {
+    panaszOldal.style.display = 'none';
+    tanacsOldal.style.display = 'block';
+    tanacsContainer.textContent = panasz.tanacs;
+    koszonoSzoveg.textContent = '';
+  }
+
+  koszonomBtn.addEventListener('click', () => {
+    koszonoSzoveg.textContent = 'Köszönjük, hogy a Netrendelőnket és a Kulissza előadását választotta';
+  });
+
+  masBtn.addEventListener('click', () => {
+    koszonoSzoveg.textContent = '';
+    tanacsOldal.style.display = 'none';
+    panaszOldal.style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
